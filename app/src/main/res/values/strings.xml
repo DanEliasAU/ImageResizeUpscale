@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">Image Resize &amp; Upscale</string>
+    <string name="app_options">Options Screen</string>
+    <string name="select_image_label">Select Image</string>
+    <string name="or">Or</string>
+    <string name="url_label">URL</string>
+    <string name="file_name_label">File Name</string>
+    <string name="url_desc">Image url</string>
+    <string name="wake_text">Wake Up PC</string>
+    <string name="go">Go</string>
+    <string name="slider_scale_label">Image Scale: %d%%</string>
+    <string name="slider_compress_label">Compression Factor: %.2f</string>
+    <string name="image_details">%.2fMB -- %d x %d px</string>
+    <string name="channel_name">image_downloaded</string>
+    <string name="channel_description">Notification test for downloading image</string>
+    <string name="transparency_fill_label">Fill Transparency:</string>
+    <string name="upscale_label">Upscale Factor:</string>
+    <string name="file_already_exists_error_message">File \'%s\' already exists!</string>
+    <string-array name="transparency_fill_options">
+        <item>White</item>
+        <item>Black</item>
+    </string-array>
+    <string-array name="upscale_options">
+        <item>0</item>
+        <item>2</item>
+        <item>4</item>
+    </string-array>
+</resources>
