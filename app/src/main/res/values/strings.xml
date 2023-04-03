@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Image Resize &amp; Upscale</string>
-    <string name="app_options">Options Screen</string>
+    <string name="app_options">Options</string>
+    <string name="app_loading">Loading</string>
     <string name="select_image_label">Select Image</string>
     <string name="or">Or</string>
     <string name="url_label">URL</string>
@@ -16,6 +17,9 @@
     <string name="transparency_fill_label">Fill Transparency:</string>
     <string name="upscale_label">Upscale Factor:</string>
     <string name="file_already_exists_error_message">File \'%s\' already exists!</string>
+    <string name="loading_text">Loading Image...</string>
+    <string name="error_file_name_empty">File name cannot be empty</string>
+    <string name="save_image">Save Image</string>
     <string-array name="transparency_fill_options">
         <item>White</item>
         <item>Black</item>

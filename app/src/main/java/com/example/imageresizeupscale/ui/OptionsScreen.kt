@@ -34,6 +34,7 @@ import android.content.DialogInterface
 import android.graphics.BitmapFactory
 import android.graphics.drawable.Drawable
 import androidx.compose.foundation.background
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
@@ -200,6 +201,7 @@ fun OptionsComposable(
 ) {
     val df = DecimalFormat("#.##")
     val context = LocalContext.current
+    val localFocusManager = LocalFocusManager.current
 
     var tempScaleFactor by remember { mutableStateOf(scaleFactor) }
     var tempCompressFactor by remember { mutableStateOf(compressFactor) }
@@ -213,14 +215,14 @@ fun OptionsComposable(
         -1 -> {
             // File already exists
             val alertBuilder = AlertDialog.Builder(context)
-             with (alertBuilder) {
+            with (alertBuilder) {
                  setMessage(stringResource(id = R.string.file_already_exists_error_message,
                      "${fileName}.jpeg"))
                  setCancelable(false)
                  setNeutralButton("OK",
                      DialogInterface.OnClickListener(function = dismissAlert))
                  show()
-             }
+            }
         }
         100 -> {
             Toast.makeText(context, "Image saved!", Toast.LENGTH_SHORT).show()
@@ -258,19 +260,33 @@ fun OptionsComposable(
             value = fileName,
             onValueChange = { newValue: String -> updateFileName(newValue) },
             singleLine = true,
+            isError = fileName.isEmpty(),
+            keyboardActions = KeyboardActions(
+                onDone = { localFocusManager.clearFocus() }
+            ),
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.CenterHorizontally)
+        )
+        Text(
+            text = when(fileName.isEmpty()) {
+                true -> stringResource(id = R.string.error_file_name_empty)
+                false -> ""
+            },
+            color = MaterialTheme.colors.error,
+            style = MaterialTheme.typography.subtitle1,
+            modifier = Modifier.padding(start = 16.dp)
         )
         Button(
             onClick = {
                 saveStatus = saveButtonOnClick(context, createNotification, imageBitmap, compressFactor,
                     fileName, imageSizeInMB, df)
             },
-            modifier = Modifier.align(Alignment.CenterHorizontally)
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            enabled = fileName.isNotEmpty()
         ) {
             Text(
-                text = "Save Image"
+                text = stringResource(id = R.string.save_image)
             )
         }
     }

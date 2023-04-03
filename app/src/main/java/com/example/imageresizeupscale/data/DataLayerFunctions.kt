@@ -116,4 +116,9 @@ class DataLayerFunctions {
         cursor?.close()
         return fileName ?: ""
     }
+
+    fun filterFileNameString(fileName: String): String {
+        val reservedChars = Regex("[/.,?\\[\\]'\"\\\\<*|:>+]")
+        return fileName.replace(reservedChars, "")
+    }
 }

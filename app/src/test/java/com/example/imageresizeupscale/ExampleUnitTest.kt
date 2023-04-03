@@ -21,4 +21,12 @@ class ExampleUnitTest {
         val isAvailable = DataLayerFunctions().testPcConnection("192.168.20.11")
         assertTrue("Network device available", isAvailable)
     }
+
+    @Test
+    fun filterBadCharsInFileName_testMethod_assertTrue() {
+        val correctlyFilteredFileName = "dshbrguiserearg"
+        val fileName = "dsh/brg|\\?*<\":>+[]/'uiser/earg."
+        val filteredName = DataLayerFunctions().filterFileNameString(fileName)
+        assertTrue("File name filtered correctly", filteredName == correctlyFilteredFileName)
+    }
 }

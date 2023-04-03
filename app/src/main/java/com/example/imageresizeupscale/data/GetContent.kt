@@ -13,8 +13,8 @@ import androidx.activity.result.contract.ActivityResultContract
 class GetContent : ActivityResultContract<String, Uri?>() {
     override fun createIntent(context: Context, input: String) =
         Intent(Intent.ACTION_GET_CONTENT).apply {
-//            putExtra(Intent.CATEGORY_OPENABLE, input)
             type = "image/*"
+            addCategory(Intent.CATEGORY_OPENABLE)
         }
 
     override fun getSynchronousResult(context: Context, input: String): SynchronousResult<Uri?>? {

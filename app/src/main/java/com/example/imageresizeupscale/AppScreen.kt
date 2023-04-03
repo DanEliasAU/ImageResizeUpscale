@@ -18,6 +18,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.imageresizeupscale.data.GetContent
 import com.example.imageresizeupscale.data.NotificationHelper
 import com.example.imageresizeupscale.ui.CustomViewModel
+import com.example.imageresizeupscale.ui.LoadingScreen
 import com.example.imageresizeupscale.ui.OptionsScreen
 import com.example.imageresizeupscale.ui.StartScreen
 import kotlinx.coroutines.Dispatchers
@@ -26,6 +27,7 @@ import kotlinx.coroutines.withContext
 
 enum class AppScreens(@StringRes val title: Int) {
     Start(title = R.string.app_name),
+    LoadingImage(title = R.string.app_loading),
     Options(title = R.string.app_options)
 }
 
@@ -85,9 +87,9 @@ fun AppScreen(
         // The launcher and associated handler for the GetContent ACTION_PICK Intent
         val launcher = rememberLauncherForActivityResult(GetContent()) { uri ->
             if (uri != null) {
-                //viewModel.updateImageUri(context, uri, uiState.upscaleFactor)
                 viewModel.updateImageUri(uri)
                 requestImageUpscale()
+                navController.navigate(AppScreens.LoadingImage.name)
             }
         }
 
@@ -138,6 +140,9 @@ fun AppScreen(
                         viewModel.clearImage()
                     }
                 )
+            }
+            composable(route = AppScreens.LoadingImage.name) {
+                LoadingScreen()
             }
         }
     }

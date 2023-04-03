@@ -37,11 +37,8 @@ class MainActivity : ComponentActivity() {
                 // app.
                 permissionGranted = true
             } else {
-                // Explain to the user that the feature is unavailable because the
-                // feature requires a permission that the user has denied. At the
-                // same time, respect the user's decision. Don't link to system
-                // settings in an effort to convince the user to change their
-                // decision.
+                // Permission not granted
+                // TODO: Tell user that they will not receive notifications
             }
         }
 
@@ -54,16 +51,26 @@ class MainActivity : ComponentActivity() {
                 ) {
                     val context = LocalContext.current
 
-//                    if (permissionGranted) {
-                    AppScreen()
-//                    }
+                    if (permissionGranted) {
+                        AppScreen()
+                    }
 
                     when (ContextCompat.checkSelfPermission(
                         context, Manifest.permission.POST_NOTIFICATIONS)
                     ) {
                         PackageManager.PERMISSION_GRANTED -> permissionGranted = true
-                        // Directly ask for the permission
-                        else -> requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                        // Check if permission needs to be granted
+                        else -> {
+                            when (android.os.Build.VERSION.SDK_INT) {
+                                in 0..32 -> {
+                                    // No POST_NOTIFICATIONS permission required
+                                    permissionGranted = true
+                                }
+                                else -> {
+                                    requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                                }
+                            }
+                        }
                     }
                 }
             }

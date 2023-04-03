@@ -3,6 +3,7 @@ package com.example.imageresizeupscale.ui
 import android.content.Context
 import android.graphics.*
 import android.net.Uri
+import android.provider.ContactsContract.Data
 import android.webkit.URLUtil
 import androidx.lifecycle.ViewModel
 import com.example.imageresizeupscale.data.DataLayerFunctions
@@ -114,7 +115,8 @@ class CustomViewModel : ViewModel() {
         val startIndex = url.lastIndexOf("/") + 1
         val endIndex = url.lastIndexOf(".")
         return if (startIndex != -1 && endIndex != -1) {
-            url.substring(startIndex, endIndex)
+            val unfiltered = url.substring(startIndex, endIndex)
+            DataLayerFunctions().filterFileNameString(unfiltered)
         } else {
             ""
         }
@@ -178,7 +180,7 @@ class CustomViewModel : ViewModel() {
     fun updateFileName(newFileName: String) {
         _uiState.update { currentState ->
             currentState.copy(
-                fileName = newFileName
+                fileName = DataLayerFunctions().filterFileNameString(newFileName)
             )
         }
     }
