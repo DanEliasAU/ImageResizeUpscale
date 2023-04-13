@@ -39,8 +39,11 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.smarttoolfactory.zoom.enhancedZoom
+import com.smarttoolfactory.zoom.rememberEnhancedZoomState
 
 @Composable
 fun OptionsScreen(
@@ -74,6 +77,7 @@ fun OptionsScreen(
         BackHandler(onBack = navigateBack)
 
         val localConfiguration = LocalConfiguration.current
+        val context = LocalContext.current
         val imageSizeInMB: Float = imageSizeInBytes.toFloat() / (1000*1000F)
 
         if (imageBitmap != null) {
@@ -142,6 +146,7 @@ fun OptionsScreen(
             }
         } else {
             // In case there is not bitmap in state, go back
+            Toast.makeText(context, "Could not open image", Toast.LENGTH_SHORT).show()
             navigateBack()
         }
     }
@@ -165,10 +170,18 @@ fun ImageComposable(
                 .align(Alignment.CenterHorizontally)
                 .aspectRatio(1f)
                 .padding(8.dp)
-                .weight(12f),
+                .weight(12f)
+                /*.enhancedZoom(
+                    clip = false,
+                    enhancedZoomState = rememberEnhancedZoomState(
+                        minZoom = 1f,
+                        maxZoom = 8f,
+                        imageSize = IntSize(imageBitmap.width, imageBitmap.height)
+                    )
+                )*/,
             imageBitmap = imageBitmap.asImageBitmap(),
             contentScale = contentScale,
-            maxZoom = 8f,
+//            maxZoom = 8f,
             clipTransformToContentScale = false
         )
         Text(

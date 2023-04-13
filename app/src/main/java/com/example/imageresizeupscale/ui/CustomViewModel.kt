@@ -4,7 +4,9 @@ import android.content.Context
 import android.graphics.*
 import android.net.Uri
 import android.provider.ContactsContract.Data
+import android.util.Log
 import android.webkit.URLUtil
+import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import com.example.imageresizeupscale.data.DataLayerFunctions
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -61,18 +63,21 @@ class CustomViewModel : ViewModel() {
         if (upscaleFactor != 0) {
             originalImage = DataLayerFunctions().upscaleImage(originalImage!!, upscaleFactor)
         }
-        // Compress and scale image for initial viewing
-        val fileName = DataLayerFunctions().getFileNameFromUri(context, uri).split(".")[0]
-        val (image, imageSize) = DataLayerFunctions().compressAndScaleBitmap(originalImage!!,
-            _uiState.value.scaleFactor, _uiState.value.compressionFactor, _uiState.value.fillColour)
-        // Update the state
-        _uiState.update { currentState ->
-            currentState.copy(
-                imageBitmap = image,
-                imageSizeInBytes = imageSize,
-                fileName = fileName,
-                urlText = ""
-            )
+        // Test if no errors when attempting to upscale
+        if (originalImage != null) {
+            // Compress and scale image for initial viewing
+            val fileName = DataLayerFunctions().getFileNameFromUri(context, uri).split(".")[0]
+            val (image, imageSize) = DataLayerFunctions().compressAndScaleBitmap(originalImage!!,
+                _uiState.value.scaleFactor, _uiState.value.compressionFactor, _uiState.value.fillColour)
+            // Update the state
+            _uiState.update { currentState ->
+                currentState.copy(
+                    imageBitmap = image,
+                    imageSizeInBytes = imageSize,
+                    fileName = fileName,
+                    urlText = ""
+                )
+            }
         }
     }
 
@@ -86,16 +91,21 @@ class CustomViewModel : ViewModel() {
 
     // TODO: Need to catch exceptions when trying to generate bitmap from a failed URL fetch
     suspend fun onStartButtonPressed(url: String, upscaleFactor: Int) {
-        if (URLUtil.isValidUrl(url)) {
-            // Obtain image data from url and generate bitmap
-            val formattedUrl = URL(url)
+        // Obtain image data from url and generate bitmap
+        val formattedUrl = URL(url)
+        try {
             formattedUrl.openStream()
             val byteArray = formattedUrl.readBytes()
             originalImage = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
-            // Upscale image if the option is given
-            if (upscaleFactor != 0) {
-                originalImage = DataLayerFunctions().upscaleImage(originalImage!!, upscaleFactor)
-            }
+        } catch (e: Exception) {
+            Log.e("MainActivity", e.message ?: "Error loading web image")
+        }
+        // Upscale image if the option is given
+        if (originalImage != null && upscaleFactor != 0) {
+            originalImage = DataLayerFunctions().upscaleImage(originalImage!!, upscaleFactor)
+        }
+        // Final check to see if image is loaded into memory (i.e. no errors)
+        if (originalImage != null) {
             // Compress and scale image for initial viewing
             val (image, imageSize) = DataLayerFunctions().compressAndScaleBitmap(originalImage!!,
                 _uiState.value.scaleFactor, _uiState.value.compressionFactor, _uiState.value.fillColour)
@@ -104,21 +114,10 @@ class CustomViewModel : ViewModel() {
                 currentState.copy(
                     imageBitmap = image,
                     imageSizeInBytes = imageSize,
-                    fileName = getFileNameFromUrl(url),
+                    fileName = DataLayerFunctions().getFileNameFromUrl(url),
                     urlText = ""
                 )
             }
-        }
-    }
-
-    private fun getFileNameFromUrl(url: String): String {
-        val startIndex = url.lastIndexOf("/") + 1
-        val endIndex = url.lastIndexOf(".")
-        return if (startIndex != -1 && endIndex != -1) {
-            val unfiltered = url.substring(startIndex, endIndex)
-            DataLayerFunctions().filterFileNameString(unfiltered)
-        } else {
-            ""
         }
     }
 
@@ -171,8 +170,7 @@ class CustomViewModel : ViewModel() {
     fun clearImage() {
         _uiState.update { currentState ->
             currentState.copy(
-                imageBitmap = null,
-                upscaleFactor = 0
+                imageBitmap = null
             )
         }
     }

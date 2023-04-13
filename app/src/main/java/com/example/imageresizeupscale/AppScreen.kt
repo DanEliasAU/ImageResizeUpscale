@@ -56,8 +56,7 @@ fun AppScreen(
             AppBar(
                 canNavigateBack = navController.previousBackStackEntry != null,
                 navigateUp = {
-                    navController.navigateUp()
-                    viewModel.clearImage()
+                    navController.popBackStack(AppScreens.Start.name, false)
                  },
                 currentScreen = currentScreen
             )
@@ -95,6 +94,7 @@ fun AppScreen(
 
         // Callback function to dispatch coroutine function onStartButtonPressed
         val requestImageOnClick: () -> Unit = {
+            navController.navigate(AppScreens.LoadingImage.name)
             coroutineScope.launch {
                  val dispatch = withContext(Dispatchers.IO) {
                      viewModel.onStartButtonPressed(uiState.urlText, uiState.upscaleFactor)
@@ -114,7 +114,8 @@ fun AppScreen(
                     onStartButtonPressed = requestImageOnClick,
                     onTextChanged = { text -> viewModel.updateUrlText(text) },
                     urlTextFieldValue = uiState.urlText,
-                    updateUpscaleFactor = { newValue -> viewModel.updateUpscaleFactor(newValue) }
+                    updateUpscaleFactor = { newValue -> viewModel.updateUpscaleFactor(newValue) },
+                    clearImage = { viewModel.clearImage() }
                 )
             }
             composable(route = AppScreens.Options.name) {
@@ -133,11 +134,11 @@ fun AppScreen(
                     fileName = uiState.fileName,
                     updateFileName = { newFileName -> viewModel.updateFileName(newFileName) },
                     navigateBack = {
-                        navController.navigateUp()
+                        navController.popBackStack(AppScreens.Start.name, false)
                         // Clears any loaded image within state when the user hits the back nav button
                         // Stops the 'Go' button from displaying previously loaded image without
                         // inputting a valid url
-                        viewModel.clearImage()
+                        //viewModel.clearImage()
                     }
                 )
             }

@@ -5,15 +5,15 @@ This is my first 'from scratch' Android project after working through several Go
 
 
 Known issues to fix:
-- Catch and handling of exceptions relating to fetching images via URL
-- Catch and handling of exceptions relating to upscaling images
+- <strike>Catch and handling of exceptions relating to fetching images via URL</strike>
+- <strike>Catch and handling of exceptions relating to upscaling images</strike>
 - <strike>Error checking of the input file name</strike>
 - <strike>Keyboard not hiding in certain circumstances (click 'Done' keyboard button, click 'Go' on start screen)</strike>
 - Slider not accurately representing finger position
     -> May need to use a different slider/try implementing my own
 - <strike>The start screen stays interactable while calling network functions
     -> Either add loading activity between start screen and options screen or move straight to options screen and use placeholders/disallow interaction</strike>
-- Loading screen not shown on pressing 'Go' (URL image) on start screen
+- <strike>Loading screen not shown on pressing 'Go' (URL image) on start screen</strike>
 
 Future Implementations:
 - <strike>Add loading/progress animations</strike>

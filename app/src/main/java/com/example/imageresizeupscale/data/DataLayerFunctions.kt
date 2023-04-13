@@ -10,6 +10,7 @@ import android.provider.OpenableColumns
 import android.util.Base64
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.graphics.scale
 import com.fasterxml.jackson.databind.ObjectMapper
 import okhttp3.MediaType.Companion.toMediaType
@@ -25,7 +26,6 @@ import java.net.URL
 
 
 class DataLayerFunctions {
-
     data class PostData(val dataURL: String, val scaleFactor: Int, val type: String)
 
     object JSON {
@@ -73,17 +73,21 @@ class DataLayerFunctions {
         val client = OkHttpClient()
         val requestBody = dataStringified.toRequestBody("application/json".toMediaType())
         // Send request
-        // TODO: Attach interceptor for catching exceptions (eg. timeout exception)
-        val request = Request.Builder().run {
-            url(url)
-            post(requestBody)
-            build()
+        try {
+            val request = Request.Builder().run {
+                url(url)
+                post(requestBody)
+                build()
+            }
+            val byteArrayBody = client.newCall(request).execute().use { response ->
+                response.body!!.bytes()
+            }
+            return BitmapFactory.decodeByteArray(byteArrayBody, 0,
+                byteArrayBody.size)
+        } catch (e: Exception) {
+            Log.e("MainActivity", e.message ?: "Could not complete request to upscale")
+            return null
         }
-        val byteArrayBody = client.newCall(request).execute().use { response ->
-            response.body!!.bytes()
-        }
-        return BitmapFactory.decodeByteArray(byteArrayBody, 0,
-            byteArrayBody.size)
     }
 
     /*
@@ -115,6 +119,17 @@ class DataLayerFunctions {
         fileName = cursor?.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME))
         cursor?.close()
         return fileName ?: ""
+    }
+
+    fun getFileNameFromUrl(url: String): String {
+        val startIndex = url.lastIndexOf("/")
+        val endIndex = url.lastIndexOf(".")
+        return if (startIndex != -1 && endIndex != -1 && endIndex > startIndex) {
+            val unfiltered = url.substring(startIndex + 1, endIndex)
+            DataLayerFunctions().filterFileNameString(unfiltered)
+        } else {
+            ""
+        }
     }
 
     fun filterFileNameString(fileName: String): String {
