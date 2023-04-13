@@ -14,6 +14,7 @@ Known issues to fix:
 - <strike>The start screen stays interactable while calling network functions
     -> Either add loading activity between start screen and options screen or move straight to options screen and use placeholders/disallow interaction</strike>
 - <strike>Loading screen not shown on pressing 'Go' (URL image) on start screen</strike>
+- Image zoom position not remembered when changing sliders
 
 Future Implementations:
 - <strike>Add loading/progress animations</strike>
